@@ -65,6 +65,7 @@ export function modelMapping(modelName) {
 export function isEnableThinking(modelName) {
   return modelName.includes('-thinking') ||
     modelName === 'gemini-2.5-pro' ||
+    modelName === 'gemini-3-flash' ||
     modelName.startsWith('gemini-3-pro-') ||
     modelName === 'rev19-uic3-1p' ||
     modelName === 'gpt-oss-120b-medium';
