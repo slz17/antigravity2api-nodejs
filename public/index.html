@@ -146,6 +146,7 @@ html.tab-settings .tab[data-tab="settings"] {
                         <div class="action-btns" id="actionBar">
                             <button type="button" onclick="showOAuthModal()" class="btn btn-success btn-sm">🔐 OAuth</button>
                             <button type="button" onclick="showManualModal()" class="btn btn-secondary btn-sm">✏️ 手动</button>
+                            <button type="button" onclick="toggleSensitiveInfo()" class="btn btn-secondary btn-sm" id="toggleSensitiveBtn" title="点击显示敏感信息">🙈 隐藏</button>
                             <button type="button" onclick="refreshAllQuotas()" class="btn btn-info btn-sm" id="refreshQuotasBtn">📊 刷新额度</button>
                             <button type="button" onclick="loadTokens()" class="btn btn-warning btn-sm">🔄 重载</button>
                             <button type="button" onclick="exportTokens()" class="btn btn-sm" style="background: var(--primary);" title="导出Token">📤 导出</button>
