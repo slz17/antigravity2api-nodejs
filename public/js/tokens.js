@@ -60,14 +60,70 @@ async function fetchProjectId(event, tokenId) {
         } else {
             showToast(`获取失败: ${data.message || '未知错误'}`, 'error');
             btn.disabled = false;
-            btn.textContent = '🔍 获取';
+            btn.textContent = '🔍';
         }
     } catch (error) {
         if (error.message !== 'Unauthorized') {
             showToast(`获取失败: ${error.message}`, 'error');
         }
         btn.disabled = false;
-        btn.textContent = '🔍 获取';
+        btn.textContent = '🔍';
+    }
+}
+
+// 批量获取所有 Token 的 Project ID
+async function batchFetchProjectIds() {
+    if (!cachedTokens || cachedTokens.length === 0) {
+        showToast('没有可用的 Token', 'warning');
+        return;
+    }
+
+    // 只获取启用的 Token
+    const enabledTokens = cachedTokens.filter(t => t.enable);
+    if (enabledTokens.length === 0) {
+        showToast('没有启用的 Token', 'warning');
+        return;
+    }
+
+    showLoading(`正在批量获取 Project ID (0/${enabledTokens.length})...`);
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (let i = 0; i < enabledTokens.length; i++) {
+        const token = enabledTokens[i];
+        updateLoadingText(`正在批量获取 Project ID (${i + 1}/${enabledTokens.length})...`);
+
+        try {
+            const response = await authFetch(`/admin/tokens/${encodeURIComponent(token.id)}/fetch-project-id`, {
+                method: 'POST'
+            });
+            const data = await response.json();
+            if (data.success) {
+                successCount++;
+            } else {
+                failCount++;
+            }
+        } catch (error) {
+            failCount++;
+        }
+
+        // 防止请求过快，每个请求间隔 500ms
+        if (i < enabledTokens.length - 1) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+        }
+    }
+
+    hideLoading();
+    showToast(`批量获取完成: 成功 ${successCount} 个，失败 ${failCount} 个`, successCount > 0 ? 'success' : 'error');
+    loadTokens(); // 刷新列表
+}
+
+// 更新 Loading 文本
+function updateLoadingText(text) {
+    const loadingText = document.querySelector('.loading-overlay .loading-text');
+    if (loadingText) {
+        loadingText.textContent = text;
     }
 }
 
@@ -882,7 +938,7 @@ function renderTokens(tokens) {
                     <span class="info-label">📦</span>
                     <span class="info-value sensitive-info">${safeProjectId || '点击设置'}</span>
                     <span class="info-edit-icon">✏️</span>
-                    ${(!token.projectId || isRandomProjectId(token.projectId)) ? `<button class="btn btn-xs btn-info fetch-project-btn" onclick="fetchProjectId(event, '${safeTokenId}')" title="从API获取Project ID">🔍 获取</button>` : ''}
+                    <button class="btn btn-xs btn-info fetch-project-btn" onclick="fetchProjectId(event, '${safeTokenId}')" title="从API获取Project ID">🔍</button>
                 </div>
                 <div class="info-row editable sensitive-row" onclick="editField(event, '${safeTokenId}', 'email', '${safeEmailJs}')" title="点击编辑">
                     <span class="info-label">📧</span>
