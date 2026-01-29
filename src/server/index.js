@@ -85,7 +85,9 @@ app.use((req, res, next) => {
     res.on('finish', () => {
       // 从请求体或 URL 参数中获取模型名称
       const model = req.body?.model || req.params?.model || null;
-      logger.request(req.method, fullPath, res.statusCode, Date.now() - start, model);
+      // 从响应对象中获取 token 数量
+      const tokens = res.locals?.tokens || null;
+      logger.request(req.method, fullPath, res.statusCode, Date.now() - start, model, tokens);
     });
   }
   next();
