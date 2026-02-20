@@ -230,12 +230,14 @@ const DEFAULT_API_CONFIGS = {
     url: 'https://daily-cloudcode-pa.sandbox.googleapis.com/v1internal:streamGenerateContent?alt=sse',
     modelsUrl: 'https://daily-cloudcode-pa.sandbox.googleapis.com/v1internal:fetchAvailableModels',
     noStreamUrl: 'https://daily-cloudcode-pa.sandbox.googleapis.com/v1internal:generateContent',
+    recordTrajectory: 'https://daily-cloudcode-pa.sandbox.googleapis.com/v1internal:recordTrajectoryAnalytics',
     host: 'daily-cloudcode-pa.sandbox.googleapis.com'
   },
   production: {
     url: 'https://daily-cloudcode-pa.googleapis.com/v1internal:streamGenerateContent?alt=sse',
     modelsUrl: 'https://daily-cloudcode-pa.googleapis.com/v1internal:fetchAvailableModels',
     noStreamUrl: 'https://daily-cloudcode-pa.googleapis.com/v1internal:generateContent',
+    recordTrajectory: 'https://daily-cloudcode-pa.googleapis.com/v1internal:recordTrajectoryAnalytics',
     host: 'daily-cloudcode-pa.googleapis.com'
   }
 };
@@ -264,8 +266,9 @@ function getActiveApiConfig(jsonConfig) {
     url: customConfig?.url || defaultConfig.url,
     modelsUrl: customConfig?.modelsUrl || defaultConfig.modelsUrl,
     noStreamUrl: customConfig?.noStreamUrl || defaultConfig.noStreamUrl,
+    recordTrajectory: customConfig?.recordTrajectory || defaultConfig.recordTrajectory,
     host: customConfig?.host || defaultConfig.host,
-    userAgent: jsonConfig.api?.userAgent || 'antigravity/1.13.3 windows/amd64'
+    userAgent: jsonConfig.api?.userAgent || 'antigravity/1.18.3 windows/amd64'
   };
 }
 
@@ -276,7 +279,7 @@ function getActiveApiConfig(jsonConfig) {
  */
 function getGeminiCliApiConfig(jsonConfig) {
   const customConfig = jsonConfig.geminicli?.api;
-  
+
   return {
     url: customConfig?.url || DEFAULT_GEMINICLI_API_CONFIG.url,
     noStreamUrl: customConfig?.noStreamUrl || DEFAULT_GEMINICLI_API_CONFIG.noStreamUrl,
@@ -357,7 +360,7 @@ export function buildConfig(jsonConfig) {
     fakeNonStream: jsonConfig.other?.fakeNonStream !== false,
     // 调试：完整打印最终请求体与原始响应（可能包含敏感内容/大体积数据，只从环境变量读取）
     debugDumpRequestResponse: process.env.DEBUG_DUMP_REQUEST_RESPONSE === '1',
-    
+
     // ==================== Gemini CLI 配置 ====================
     geminicli: {
       // 是否启用 Gemini CLI 反代功能
